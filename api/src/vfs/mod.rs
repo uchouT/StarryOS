@@ -2,7 +2,6 @@
 
 pub mod dev;
 mod proc;
-pub mod readahead;
 mod tmp;
 
 use axerrno::LinuxResult;
