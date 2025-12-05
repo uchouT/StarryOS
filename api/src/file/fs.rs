@@ -10,6 +10,8 @@ use core::{
 use axerrno::{AxError, AxResult};
 use axfs::{FS_CONTEXT, FsContext};
 use axfs_ng_vfs::{Location, Metadata, NodeFlags};
+// use crate::vfs::readahead::{ReadaheadAction, ReadaheadState, do_sync_readahead, readahead_decide};
+use axio::BufMut;
 use axpoll::{IoEvents, Pollable};
 use axsync::Mutex;
 use axtask::future::{block_on, poll_io};
@@ -17,8 +19,6 @@ use linux_raw_sys::general::{AT_EMPTY_PATH, AT_FDCWD, AT_SYMLINK_NOFOLLOW};
 
 use super::{FileLike, Kstat, get_file_like};
 use crate::file::{SealedBuf, SealedBufMut};
-// use crate::vfs::readahead::{ReadaheadAction, ReadaheadState, do_sync_readahead, readahead_decide};
-use axio::BufMut;
 
 pub fn with_fs<R>(dirfd: c_int, f: impl FnOnce(&mut FsContext) -> AxResult<R>) -> AxResult<R> {
     let mut fs = FS_CONTEXT.lock();
@@ -164,7 +164,7 @@ fn path_for(loc: &Location) -> Cow<'static, str> {
 impl FileLike for File {
     fn read(&self, dst: &mut SealedBufMut) -> AxResult<usize> {
         let inner = self.inner();
-        let read_len = dst.remaining_mut();
+        // let read_len = dst.remaining_mut();
 
         // // Trigger readahead for sequential access optimization
         // self.maybe_readahead(read_len);
